@@ -1,33 +1,32 @@
 pipeline {
     agent any
-
     stages {
-        stage('Code Cloned') {
+        stage('Code Clone') {
             steps {
-                git url: "https://github.com/SanketShirke/django-todo-app.git" , branch: "main" 
-                echo 'Code Cloned'
+                git url: "https://github.com/SanketShirke/django-todo-app.git", branch: "main"
+                echo 'Code has been cloned'
             }
         }
         stage('Code Build') {
             steps {
-                sh "docker build . -t flask-app"
-                echo 'Code Build'
+                sh "docker build . -t demo-app"
+                echo 'code has been build'
             }
         }
-        stage('Push the code to the Docker hub') {
+        stage('Push the code at docker hub repository') {
             steps {
-                withCredentials([usernamePassword(credentialsId:"dockerhub",passwordVariable:"dockerhubpass",usernameVariable:"dockerhubuser")]){
-                    sh "docker login -u ${env.dockerhubuser} -p ${env.dockerhubpass}"
-                    sh "docker tag  flask-app:latest ${env.dockerhubuser}/flask-app:latest"
-                    sh "docker push ${env.dockerhubuser}/flask-app:latest"
+                withCredentials([usernamePassword(credentialsId: "dockerhub",passwordVariable: "dockerHubpass",usernameVariable: "dockerhHubuser")]){
+                    sh "docker login -u ${env.dockerhHubuser} -p ${env.dockerHubpass}"
+                    sh "docker tag demo-app:latest ${env.dockerhHubuser}/demo-app:latest"
+                    sh "docker push ${env.dockerhHubuser}/demo-app:latest"
                 }
-                echo 'Push the code to the Docker hub'
+                echo 'Pushing the code at Docker hub repo'
             }
         }
-        stage('Deploy the Code on AWS') {
+        stage('Deploy the application on AWS Instance') {
             steps {
                 sh "docker compose down && docker compose up -d"
-                echo 'Deploy the Code on AWS'
+                echo 'Deployed the application on AWS Instance'
             }
         }
     }
